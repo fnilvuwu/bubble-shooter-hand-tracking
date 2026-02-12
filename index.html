@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Hand Bubble Shooter</title>
+    <link rel="icon" href="logo.webp" type="image/webp">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6.1629159505/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="scorePanel" class="hud-panel">
+            <i class="fas fa-trophy icon-glow"></i>
+            <span class="label">Score</span>
+            <span id="scoreValue">0000</span>
+        </div>
+
+        <div id="nextPanel" class="hud-panel">
+            <i class="fas fa-forward icon-glow"></i>
+            <span class="label">Next</span>
+            <canvas id="nextBubbleCanvas" width="60" height="60"></canvas>
+        </div>
+
+        <div id="handVisualizer" class="hand-visualizer">
+            <div class="hand-icon-container">
+                <i class="fas fa-hand-rock hand-gesture" id="handGesture"></i>
+                <div class="gesture-ring"></div>
+                <div class="gesture-ring ring-2"></div>
+            </div>
+            <div class="gesture-hint" id="gestureHint">PINCH TO GRAB</div>
+        </div>
+
+        <div id="comboText">
+            <i class="fas fa-star"></i>
+            <span id="comboMultiplier">X3</span>
+            <span>COMBO</span>
+        </div>
+
+        <div class="webcam-container" id="webcamFrame">
+            <video id="webcam" playsinline></video>
+            <canvas id="skeletonCanvas" width="320" height="240"></canvas>
+            <div class="webcam-overlay">
+                <i class="fas fa-video"></i>
+            </div>
+        </div>
+
+        <div class="power-indicator" id="powerIndicator">
+            <i class="fas fa-bolt power-icon"></i>
+            <div class="power-fill" id="powerFill"></div>
+        </div>
+
+        <div id="modeIndicator">
+            <i class="fas fa-circle-notch status-icon" id="statusIcon"></i>
+            STATUS: <span id="modeText" style="color: var(--neon-blue)">WAITING</span>
+        </div>
+
+        <div id="creatorInfo">
+            <i class="fas fa-code"></i>
+            Created by <a href="https://twitter.com/fnilvuwu" target="_blank">fnilvuwu</a>
+        </div>
+
+        <div id="overlay">
+            <img src="logo.webp" width="300">
+            <div class="title-icon-wrapper">
+                <h1>AI-HAND BUBBLE SHOOTER</h1>
+            </div>
+            <p style="margin-bottom: 30px; color: #888">
+                <i class="fas fa-hand-lizard" style="color: var(--neon-blue); margin-left: 8px; margin-right: 8px;"></i>
+                PINCH TO GRAB
+                <i class="fas fa-up-down-left-right"
+                    style="color: var(--neon-blue); margin-left: 8px; margin-right: 8px;"></i>
+                MOVE TO AIM
+                <i class="fas fa-hand-sparkles"
+                    style="color: var(--neon-blue); margin-left: 8px; margin-right: 8px;"></i>
+                RELEASE TO FIRE
+            </p>
+            <div id="highScoreDisplay"
+                style="margin-bottom: 20px; color: var(--neon-blue); font-size: 18px; font-weight: bold;">
+                <i class="fas fa-trophy" style="color: #FFD700; margin-right: 8px;"></i>
+                HIGH SCORE: <span id="highScoreValue">0000</span>
+            </div>
+            <button onclick="startGame()">
+                <i class="fas fa-rocket"></i>
+                START GAME
+            </button>
+            <div style="margin-top: 30px; color: #888; font-size: 14px;">
+                Created by <strong style="color: var(--neon-blue)">fnilvuwu</strong><br>
+                <div class="social-links">
+                    <a href="https://linkedin.com/in/fnilvuwu" target="_blank" class="social-icon" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://instagram.com/fnilvuwu" target="_blank" class="social-icon" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://youtube.com/@fnilvuwu" target="_blank" class="social-icon" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://fiverr.com/fnilvuwu" target="_blank" class="social-icon" title="Fiverr">
+                        <i class="fas fa-briefcase"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Load and display high score on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('bubbleShooterHighScore');
+            const highScore = saved ? parseInt(saved, 10) : 0;
+            const highScoreElement = document.getElementById('highScoreValue');
+            if (highScoreElement) {
+                highScoreElement.textContent = highScore.toString().padStart(4, '0');
+            }
+        });
+    </script>
+</body>
+
+</html>
